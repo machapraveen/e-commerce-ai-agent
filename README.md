@@ -1,165 +1,193 @@
-🤖 E-Commerce AI Agent
+# E-Commerce AI Agent
 
-<div align="center">
+A sophisticated Flask web application that leverages AI agents to search and compare products across multiple e-commerce platforms simultaneously. Built with LangChain, LangGraph, and Model Context Protocol (MCP) integration for intelligent product discovery.
 
-![AI/ML](https://img.shields.io/badge/AI%2FML-Complex-blue?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+## Author
+**Macha Praveen**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Stars](https://img.shields.io/github/stars/machapraveen/e-commerce-ai-agent?style=for-the-badge)](https://github.com/machapraveen/e-commerce-ai-agent/stargazers)
-[![Issues](https://img.shields.io/github/issues/machapraveen/e-commerce-ai-agent?style=for-the-badge)](https://github.com/machapraveen/e-commerce-ai-agent/issues)
+## Overview
 
-</div>
+This application uses an AI-powered agent to intelligently search for products across major e-commerce platforms including Amazon, Best Buy, eBay, Walmart, Target, Costco, and Newegg. The agent uses web scraping and structured data extraction to provide comprehensive product comparisons in a user-friendly interface.
 
-## 🎯 Overview
+## Features
 
-AI-powered e-commerce product search agent using multiple platform APIs
+- **Multi-Platform Search**: Search across 7 major e-commerce platforms simultaneously
+- **AI-Powered Agent**: Uses GPT-4 with ReAct (Reasoning and Acting) framework for intelligent product discovery
+- **Structured Responses**: Returns organized product data with URLs, titles, and ratings
+- **MCP Integration**: Leverages Model Context Protocol for robust web data extraction
+- **Real-time Results**: Asynchronous processing for fast response times
+- **Responsive Web Interface**: Bootstrap-powered UI with modern styling
 
-This complex AI/ML project demonstrates advanced techniques and modern development practices, featuring cutting-edge implementations and professional-grade architecture.
+## Architecture
 
-## ✨ Key Features
+### Core Components
 
-- 🔥 **Multi-platform product search**
-- 🔥 **AI agent integration**
-- 🔥 **Structured responses**
-- 🔥 **Web scraping**
-- 🔥 **Search aggregation**
-
-## 🛠️ Technology Stack
-
-- **Python**
-- **Flask**
-- **MCP**
-- **LangChain**
-- **OpenAI**
-
-## 🚀 Quick Start
-
-### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/machapraveen/e-commerce-ai-agent.git
-cd e-commerce-ai-agent
-```
-
-### 2️⃣ Install Dependencies
-```bash
-# For Python projects
-pip install -r requirements.txt
-
-# For React projects (if applicable)
-npm install
-
-# For Docker projects (if applicable)
-docker-compose up
-```
-
-### 3️⃣ Run the Application
-```bash
-# Python applications
-python main.py  # or app.py
-
-# Jupyter notebooks
-jupyter notebook
-
-# Django projects
-python manage.py runserver
-
-# React applications
-npm start
-```
-
-## 📖 Usage
-
-This project offers comprehensive functionality for ai-powered e-commerce product search agent using multiple platform apis. Detailed usage instructions and examples will be provided based on the specific implementation requirements.
-
-### Basic Usage Example
+**AI Agent Framework:**
 ```python
-# Example code snippet will be added based on the project structure
-# This demonstrates how to use the main functionality
+# Agent setup with structured response format
+agent = create_react_agent(model, tools, response_format=ProductSearchResponse)
+
+# Structured response model
+class ProductSearchResponse(BaseModel):
+    platforms: list[PlatformBlock] = Field(..., description='Aggregated list of all results grouped by platform')
 ```
 
-## 🏗️ Project Structure
-
+**MCP Server Integration:**
+```python
+server_params = StdioServerParameters(
+    command='npx',
+    args=['@brightdata/mcp'],
+    env = {
+        'API_TOKEN': os.getenv('API_TOKEN'),
+        'BROWSER_AUTH': os.getenv('BROWSER_AUTH'),
+        'WEB_UNLOCKER_ZONE': os.getenv('WEB_UNLOCKER_ZONE')
+    }
+)
 ```
-e-commerce-ai-agent/
-├── README.md
-├── requirements.txt (if Python)
-├── src/                    # Source code
-├── tests/                  # Unit tests
-├── docs/                   # Documentation
-└── examples/               # Usage examples
+
+**Async Agent Execution:**
+```python
+async def run_agent(query, platforms):
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as sess:
+            await sess.initialize()
+            tools = await load_mcp_tools(sess)
+            agent = create_react_agent(model, tools, response_format=ProductSearchResponse)
+            result = await agent.ainvoke({
+                'messages': [
+                    {'role': 'system', 'content': SYSTEM_PROMPT},
+                    {'role': 'user', 'content': prompt}
+                ]
+            })
+            return result['structured_response'].model_dump()
 ```
 
-## 🧪 Testing
+## Supported Platforms
 
-Run the test suite to ensure everything works correctly:
+1. **Amazon** - World's largest online marketplace
+2. **Best Buy** - Electronics and technology products
+3. **eBay** - Auction and marketplace platform
+4. **Walmart** - Retail giant with online presence
+5. **Target** - Department store with e-commerce
+6. **Costco** - Warehouse club retailer
+7. **Newegg** - Computer hardware and electronics specialist
 
+## Installation
+
+### Prerequisites
+- Python 3.8+
+- Node.js (for MCP server)
+- OpenAI API key
+- BrightData credentials (for web scraping)
+
+### Dependencies Installation
 ```bash
-# Python projects
-python -m pytest tests/
-
-# Node.js projects
-npm test
-
-# Django projects
-python manage.py test
+pip install flask python-dotenv pydantic langchain-openai langchain-mcp-adapters langgraph mcp
+npm install -g @brightdata/mcp
 ```
 
-## 📊 Performance
+### Environment Configuration
+Create a `.env` file with the following variables:
+```env
+OPENAI_API_KEY=your_openai_api_key
+API_TOKEN=your_brightdata_api_token
+BROWSER_AUTH=your_browser_auth_credentials
+WEB_UNLOCKER_ZONE=your_web_unlocker_zone
+```
 
-This project has been optimized for performance with:
-- Efficient algorithms and data structures
-- Memory optimization techniques
-- Scalable architecture design
-- Comprehensive error handling
+## Usage
 
-## 🔮 Roadmap
+### Running the Application
+```bash
+python app.py
+```
 
-- [ ] Enhanced performance optimizations
-- [ ] Additional feature implementations
-- [ ] Mobile/responsive design improvements
-- [ ] Advanced analytics and monitoring
-- [ ] API documentation and examples
-- [ ] Integration with cloud services
+The application will start on `http://0.0.0.0:8000`
 
-## 🤝 Contributing
+### Web Interface Usage
 
-Contributions are always welcome! Here's how you can help:
+1. **Enter Search Query**: Type your product search query (e.g., "best budget gaming laptop")
+2. **Select Platforms**: Choose which e-commerce platforms to search
+3. **Run Agent**: Click the "Run agent" button to execute the search
+4. **View Results**: Browse organized results by platform with direct links to products
 
-1. **Fork the Project**
-2. **Create your Feature Branch** (`git checkout -b feature/AmazingFeature`)
-3. **Commit your Changes** (`git commit -m 'Add some AmazingFeature'`)
-4. **Push to the Branch** (`git push origin feature/AmazingFeature`)
-5. **Open a Pull Request**
+### Example Search Flow
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+**Input:**
+- Query: "wireless bluetooth headphones under $100"
+- Platforms: Amazon, Best Buy, Target
 
-## 📜 License
+**Output:**
+```json
+{
+  "platforms": [
+    {
+      "platform": "Amazon",
+      "results": [
+        {
+          "url": "https://amazon.com/product/...",
+          "title": "Sony WH-CH720N Wireless Noise Canceling Headphones",
+          "rating": "4.3 stars (12,450 ratings)"
+        }
+      ]
+    },
+    {
+      "platform": "Best Buy",
+      "results": [
+        {
+          "url": "https://bestbuy.com/site/...",
+          "title": "JBL Tune 760NC Wireless Over-Ear Headphones",
+          "rating": "4.4/5 (892 reviews)"
+        }
+      ]
+    }
+  ]
+}
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Technology Stack
 
-## 🌟 Acknowledgments
+- **Backend**: Flask (Python web framework)
+- **AI/ML**: LangChain, LangGraph, OpenAI GPT-4
+- **Web Scraping**: BrightData MCP Server
+- **Data Validation**: Pydantic models
+- **Frontend**: Bootstrap 5, Jinja2 templates
+- **Async Processing**: Python asyncio
+- **Environment Management**: python-dotenv
 
-- Thanks to the open-source community for inspiration and resources
-- Built with passion for advancing technology and innovation
-- Special thanks to all contributors and supporters
+## Key Features Explained
 
-## 📞 Contact & Support
+### Intelligent Agent System
+The application uses LangGraph's ReAct agent pattern, which combines reasoning and acting to intelligently search for products. The agent first reasons about the search strategy, then acts by using appropriate tools for each platform.
 
-**Praveen Kumar Macha**
-- 🐙 GitHub: [@machapraveen](https://github.com/machapraveen)
-- 📧 Email: machapraveen@example.com
-- 🔗 Project Link: [https://github.com/machapraveen/e-commerce-ai-agent](https://github.com/machapraveen/e-commerce-ai-agent)
+### Structured Data Extraction
+All product data is validated using Pydantic models, ensuring consistent structure across different e-commerce platforms:
 
-For support, email machapraveen@example.com or open an issue on GitHub.
+```python
+class Hit(BaseModel):
+    url: str = Field(..., description='The URL of the product that was found')
+    title: str = Field(..., description='The title of the product that was found')
+    rating: str = Field(..., description='The rating of the product (stars, number of ratings given etc.)')
+```
 
----
+### MCP Integration
+The Model Context Protocol integration allows the agent to access specialized web scraping tools for each e-commerce platform, providing reliable and structured data extraction.
 
-<div align="center">
+## Development Notes
 
-**⭐ If you found this project helpful, please give it a star! ⭐**
+- The application uses asynchronous processing to handle multiple platform searches efficiently
+- Error handling includes user-friendly flash messages for various failure scenarios
+- The responsive design adapts to different screen sizes and devices
+- Platform-specific optimizations ensure accurate product data extraction
 
-Made with ❤️ by [Praveen Kumar Macha](https://github.com/machapraveen)
+## Future Enhancements
 
-</div>
+- Price comparison and historical tracking
+- User accounts and saved searches
+- Product recommendation system
+- Integration with additional e-commerce platforms
+- Advanced filtering and sorting options
+
+## License
+
+This project is open-source and available under the MIT License.
